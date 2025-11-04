@@ -112,8 +112,6 @@ export const about = {
                             <div class="ml-4 space-y-1">
                                 <p><span class="text-blue-400">GitHub:</span> ${personalInfo.contact.social.github}</p>
                                 <p><span class="text-blue-400">LinkedIn:</span> ${personalInfo.contact.social.linkedin}</p>
-                                <p><span class="text-blue-400">Twitter:</span> ${personalInfo.contact.social.twitter}</p>
-                                <p><span class="text-blue-400">Facebook:</span> ${personalInfo.contact.social.facebook}</p>
                             </div>
                         </div>
                     </div>

@@ -28,24 +28,13 @@ const projectsData = {
             id: 3,
             title: "ForOranges",
             description: "Full-stack e-commerce solution with React and Node.js and Supabase integration for authentication and database management.",
-            image: "../giphy.gif",
+            image: "../GIFS/fororanges.gif",
             technologies: ["React", "Node.js", "MongoDB"],
-            link: "#",
+            link: "e-com-front-chi.vercel.app",
             github: "https://github.com/chait/ecommerce-platform",
             hasGifPreview: true,
             gifPreviewTitle: "E-commerce Preview"
         },
-        {
-            id: 4,
-            title: "Task Management App",
-            description: "A productivity app for managing daily tasks",
-            image: "../giphy.gif",
-            technologies: ["Vue.js", "Firebase"],
-            link: "#",
-            github: "https://github.com/chait/task-management-app",
-            hasGifPreview: true,
-            gifPreviewTitle: "Task App Preview"
-        }
     ]
 };
 

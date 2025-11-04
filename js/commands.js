@@ -13,7 +13,6 @@ export const commands = {
     projects,
     contact,
     clear,
-    easy_mode
 };
 
 // Make commands available globally for the help command

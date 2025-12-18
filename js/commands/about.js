@@ -100,23 +100,7 @@ export const about = {
                         `).join('')}
                     </div>
                 </div>
-                
-                <div class="mt-4">
-                    <h3 class="font-bold mb-2">Contact Information:</h3>
-                    <div class="space-y-1">
-                        <p><span class="text-green-400">Email:</span> ${personalInfo.contact.email}</p>
-                        <p><span class="text-green-400">Phone:</span> ${personalInfo.contact.phone}</p>
-                        <p><span class="text-green-400">Location:</span> ${personalInfo.contact.location}</p>
-                        <div class="mt-2">
-                            <p class="text-green-400">Social:</p>
-                            <div class="ml-4 space-y-1">
-                                <p><span class="text-blue-400">GitHub:</span> ${personalInfo.contact.social.github}</p>
-                                <p><span class="text-blue-400">LinkedIn:</span> ${personalInfo.contact.social.linkedin}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+              </div>
         </div>`;
     }
 };

@@ -8,6 +8,8 @@ export const help = {
         // This will be populated by the main commands.js file
         const commands = window.commands || {};
         for (const [cmd, details] of Object.entries(commands)) {
+            // Skip the help command itself
+            if (cmd === 'help') continue;
             output += `<div class="mb-1"><span class="text-green-400">${cmd}</span> - ${details.description}</div>`;
         }
         

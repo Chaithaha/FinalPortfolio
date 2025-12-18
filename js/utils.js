@@ -44,7 +44,6 @@ function addNewCommandLine(terminal) {
         <div class="command-line">
             <span class="prompt">$</span>
             <span id="current-command"></span>
-            <span class="cursor"></span>
         </div>
     `;
     terminal.insertAdjacentHTML('beforeend', commandLineHTML);

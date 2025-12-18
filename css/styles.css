@@ -41,10 +41,12 @@ body {
 
 .cursor {
     display: inline-block;
-    width: 10px;
-    height: 20px;
+    width: 2px;
+    height: 1.2em;
     background-color: #e0e0e0;
     animation: blink 1s infinite;
+    vertical-align: text-bottom;
+    margin-left: 1px;
 }
 
 @keyframes blink {

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const terminal = document.getElementById('terminal-content');
     let commandHistory = [];
     let currentCommand = 0;
+    let cursorPosition = 0; // Track cursor position within the command text
 
     // Function to create Matrix-style character spans
     function createMatrixText(text) {
@@ -22,6 +23,54 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get the current command element
     function getCurrentCommandElement() {
         return document.getElementById('current-command');
+    }
+
+    // Get the current command text
+    function getCurrentCommandText() {
+        const element = getCurrentCommandElement();
+        if (element) {
+            // Remove the cursor element and get text content
+            const clone = element.cloneNode(true);
+            const cursor = clone.querySelector('.cursor');
+            if (cursor) cursor.remove();
+            return clone.textContent;
+        }
+        return '';
+    }
+
+    // Update command text with cursor position
+    function updateCommandText(text, position = null) {
+        const element = getCurrentCommandElement();
+        if (element) {
+            if (position !== null) {
+                cursorPosition = Math.max(0, Math.min(position, text.length));
+            } else {
+                cursorPosition = text.length;
+            }
+
+            // Split text at cursor position and insert cursor
+            const beforeCursor = text.slice(0, cursorPosition);
+            const afterCursor = text.slice(cursorPosition);
+
+            // Use innerHTML to properly render the cursor
+            element.innerHTML = beforeCursor + '<span class="cursor"></span>' + afterCursor;
+        }
+    }
+
+    // Insert character at cursor position
+    function insertAtCursor(char) {
+        const text = getCurrentCommandText();
+        const newText = text.slice(0, cursorPosition) + char + text.slice(cursorPosition);
+        updateCommandText(newText, cursorPosition + 1);
+    }
+
+    // Delete character at cursor position (backspace)
+    function deleteAtCursor() {
+        const text = getCurrentCommandText();
+        if (cursorPosition > 0) {
+            const newText = text.slice(0, cursorPosition - 1) + text.slice(cursorPosition);
+            updateCommandText(newText, cursorPosition - 1);
+        }
     }
     
     // Initial content with enhanced retro game title
@@ -47,12 +96,14 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="command-line">
             <span class="prompt">$</span>
             <span id="current-command"></span>
-            <span class="cursor"></span>
         </div>
     `;
     
     terminal.innerHTML = initialContent;
-    
+
+    // Initialize cursor position
+    updateCommandText('', 0);
+
     // Generate star field
     generateStarField();
     
@@ -125,22 +176,43 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add new command line (this will remove the old one)
             addNewCommandLine(terminal);
-            
+            // Reset cursor position for new command
+            cursorPosition = 0;
+
             window.terminalUtils.scrollToBottom();
         } else if (e.key === 'Backspace') {
-            if (currentCommandElement) {
-                currentCommandElement.textContent = currentCommandElement.textContent.slice(0, -1);
-            }
+            e.preventDefault();
+            deleteAtCursor();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const text = getCurrentCommandText();
+            cursorPosition = Math.max(0, cursorPosition - 1);
+            updateCommandText(text, cursorPosition); // Update visual cursor
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            const text = getCurrentCommandText();
+            cursorPosition = Math.min(text.length, cursorPosition + 1);
+            updateCommandText(text, cursorPosition); // Update visual cursor
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            currentCommand = navigateHistory('up', commandHistory, currentCommand, currentCommandElement);
+            if (commandHistory.length > 0 && currentCommand > 0) {
+                currentCommand--;
+                const text = commandHistory[currentCommand];
+                updateCommandText(text, text.length); // Position cursor at end
+            }
         } else if (e.key === 'ArrowDown') {
             e.preventDefault();
-            currentCommand = navigateHistory('down', commandHistory, currentCommand, currentCommandElement);
-        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-            if (currentCommandElement) {
-                currentCommandElement.textContent += e.key;
+            if (currentCommand < commandHistory.length - 1) {
+                currentCommand++;
+                const text = commandHistory[currentCommand];
+                updateCommandText(text, text.length); // Position cursor at end
+            } else {
+                currentCommand = commandHistory.length;
+                updateCommandText('', 0); // Empty command
             }
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            insertAtCursor(e.key);
         }
     });
     

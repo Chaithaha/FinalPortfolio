@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById('current-command');
     }
 
+    // Get the mobile input element
+    function getMobileInputElement() {
+        return document.getElementById('mobile-input');
+    }
+
     // Get the current command text
     function getCurrentCommandText() {
         const element = getCurrentCommandElement();
@@ -41,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update command text with cursor position
     function updateCommandText(text, position = null) {
         const element = getCurrentCommandElement();
+        const mobileInputElement = getMobileInputElement();
+
         if (element) {
             if (position !== null) {
                 cursorPosition = Math.max(0, Math.min(position, text.length));
@@ -54,6 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Use innerHTML to properly render the cursor
             element.innerHTML = beforeCursor + '<span class="cursor"></span>' + afterCursor;
+
+            // Sync mobile input field
+            if (mobileInputElement && mobileInputElement.value !== text) {
+                mobileInputElement.value = text;
+            }
         }
     }
 
@@ -87,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="pixel-logo-container">
                     <div class="star-field" id="star-field"></div>
                     <div class="text-container">
-                        <div class="welcome-text typing">${matrixText}</div>
+                        <div class="welcome-text">${matrixText}</div>
                     </div>
                 </div>
             </div>
@@ -96,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="command-line">
             <span class="prompt">$</span>
             <span id="current-command"></span>
+            <input type="text" id="mobile-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
         </div>
     `;
     
@@ -107,28 +120,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate star field
     generateStarField();
     
-    // Start with white text; begin RGB cycle after typing animation completes
+    // Start RGB color cycling and shooting stars immediately
     const welcomeTextEl = document.querySelector('.welcome-text');
     if (welcomeTextEl) {
-        welcomeTextEl.addEventListener('animationend', function(e) {
-            if (e.animationName === 'typing') {
-                setTimeout(() => {
-                    const matrixChars = welcomeTextEl.querySelectorAll('.matrix-char');
-                    matrixChars.forEach((node, index) => {
-                        node.classList.add('rgb-on');
-                        // Random duration between 2-4 seconds
-                        const duration = 2 + Math.random() * 2;
-                        // Delay based on character position plus some randomness
-                        const delay = (index * 0.1) + (Math.random() * 0.5);
-                        node.style.animationDuration = duration + 's';
-                        node.style.animationDelay = delay + 's';
-                    });
-                    
-                    // Start shooting stars after layout is stable
-                    startShootingStars();
-                }, 300);
-            }
-        }, { once: true });
+        setTimeout(() => {
+            const matrixChars = welcomeTextEl.querySelectorAll('.matrix-char');
+            matrixChars.forEach((node, index) => {
+                node.classList.add('rgb-on');
+                // Random duration between 2-4 seconds
+                const duration = 2 + Math.random() * 2;
+                // Delay based on character position plus some randomness
+                const delay = (index * 0.1) + (Math.random() * 0.5);
+                node.style.animationDuration = duration + 's';
+                node.style.animationDelay = delay + 's';
+            });
+
+            // Start shooting stars after layout is stable
+            startShootingStars();
+        }, 300);
     }
     
     // Handle keyboard input
@@ -176,10 +185,53 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add new command line (this will remove the old one)
             addNewCommandLine(terminal);
-            // Reset cursor position for new command
+            // Reset cursor position for new command and initialize it
             cursorPosition = 0;
+            updateCommandText('', 0);
 
-            window.terminalUtils.scrollToBottom();
+            // Enhanced scrolling for both desktop and mobile
+            setTimeout(() => {
+                if ('ontouchstart' in window) {
+                    // Mobile-specific enhanced scrolling
+                    const terminalBody = document.querySelector('.terminal-body');
+                    if (terminalBody) {
+                        // Force scroll to bottom immediately
+                        terminalBody.scrollTop = terminalBody.scrollHeight;
+
+                        // Additional scroll after a small delay to ensure it works
+                        setTimeout(() => {
+                            terminalBody.scrollTop = terminalBody.scrollHeight;
+
+                            // Highlight and activate the new command line on mobile
+                            const newCommandLine = document.querySelector('.command-line:not(.executed)');
+                            if (newCommandLine) {
+                                newCommandLine.classList.add('active');
+
+                                // Remove the active class after a delay
+                                setTimeout(() => {
+                                    newCommandLine.classList.remove('active');
+                                }, 2000);
+                            }
+
+                            // Re-setup mobile input for the new command line
+                            if (typeof window.setupMobileInput === 'function') {
+                                window.setupMobileInput();
+
+                                // Focus on mobile
+                                setTimeout(() => {
+                                    const newMobileInput = document.getElementById('mobile-input');
+                                    if (newMobileInput) {
+                                        newMobileInput.focus();
+                                    }
+                                }, 100);
+                            }
+                        }, 150);
+                    }
+                } else {
+                    // Desktop scrolling
+                    window.terminalUtils.scrollToBottom();
+                }
+            }, 100);
         } else if (e.key === 'Backspace') {
             e.preventDefault();
             deleteAtCursor();
@@ -224,10 +276,300 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Make the current command element focusable
+    // Set up mobile input handling
     const currentCommandElement = getCurrentCommandElement();
-    if (currentCommandElement) {
+    const mobileInputElement = getMobileInputElement();
+
+    if (currentCommandElement && mobileInputElement) {
+        // Make current command element focusable for accessibility
         currentCommandElement.setAttribute('tabindex', '0');
+        currentCommandElement.setAttribute('role', 'textbox');
+        currentCommandElement.setAttribute('aria-label', 'Terminal command input');
+
+        // Handle mobile input events
+        mobileInputElement.addEventListener('input', function(e) {
+            const text = e.target.value;
+            updateCommandText(text, text.length);
+        });
+
+        mobileInputElement.addEventListener('keydown', function(e) {
+            // Handle special keys
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const commandText = getCurrentCommandText().trim();
+
+                // Trigger the same logic as desktop keyboard input
+                commandHistory.push(commandText);
+                currentCommand = commandHistory.length;
+
+                preserveCurrentCommand(terminal);
+                const output = executeCommand(commandText, commands);
+
+                if (commandText === 'clear') {
+                    const commandOutputs = terminal.querySelectorAll('.command-output:not(:first-child)');
+                    commandOutputs.forEach(output => output.remove());
+                    const commandLines = terminal.querySelectorAll('.command-line');
+                    commandLines.forEach(line => line.remove());
+                } else if (commandText === 'easy_mode') {
+                    window.location.href = '../Simpler-Portfolio/Simple.html';
+                    return;
+                } else if (output) {
+                    const executedCommand = terminal.querySelector('.command-line.executed:last-child');
+                    if (executedCommand) {
+                        executedCommand.insertAdjacentHTML('afterend', output);
+                    } else {
+                        terminal.insertAdjacentHTML('beforeend', output);
+                    }
+                    window.terminalUtils.smartAutoScrollWithContentDetection();
+                }
+
+                addNewCommandLine(terminal);
+                cursorPosition = 0;
+                updateCommandText('', 0);
+                window.terminalUtils.scrollToBottom();
+
+                // Clear mobile input
+                e.target.value = '';
+            } else if (e.key === 'Backspace') {
+                // Let the input handle backspace naturally
+                setTimeout(() => {
+                    const text = e.target.value;
+                    updateCommandText(text, text.length);
+                }, 1);
+            }
+        });
+
+        // Handle focus management - focus hidden mobile input when terminal is clicked
+        currentCommandElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            mobileInputElement.focus();
+        });
+
+        currentCommandElement.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            mobileInputElement.focus();
+        });
+
+        // Sync focus states
+        mobileInputElement.addEventListener('focus', function() {
+            currentCommandElement.style.backgroundColor = 'rgba(39, 201, 63, 0.05)';
+            updateCommandText(this.value, this.value.length);
+        });
+
+        mobileInputElement.addEventListener('blur', function() {
+            currentCommandElement.style.backgroundColor = 'transparent';
+            cursorPosition = this.value.length;
+        });
+
+        // Focus terminal on click anywhere
+        document.addEventListener('click', function(e) {
+            const currentMobileInput = document.getElementById('mobile-input');
+            if (e.target.closest('.terminal') && !e.target.closest('.mode-button') && !e.target.closest('.link') && currentMobileInput) {
+                currentMobileInput.focus();
+            }
+        });
+
+        // Auto-focus on mobile
+        if ('ontouchstart' in window) {
+            setTimeout(() => {
+                mobileInputElement.focus();
+            }, 500);
+        }
+    }
+
+    // Global function to ensure mobile input is always properly set up
+    window.setupMobileInput = function() {
+        const currentCommandElement = document.getElementById('current-command');
+        const mobileInputElement = document.getElementById('mobile-input');
+
+        if (currentCommandElement && mobileInputElement) {
+            // Clear any existing event listeners by removing and re-adding the input
+            const newInput = mobileInputElement.cloneNode(true);
+            mobileInputElement.parentNode.replaceChild(newInput, mobileInputElement);
+
+            // Set up input event handler
+            newInput.addEventListener('input', function(e) {
+                const text = e.target.value;
+                if (window.updateCommandText) {
+                    window.updateCommandText(text, text.length);
+                }
+
+                // Update has-text class on the command line
+                const commandLine = currentCommandElement.closest('.command-line');
+                if (commandLine) {
+                    if (text.trim()) {
+                        commandLine.classList.add('has-text');
+                    } else {
+                        commandLine.classList.remove('has-text');
+                    }
+                }
+            });
+
+            newInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const commandText = currentCommandElement.textContent.trim();
+
+                    // Store this in the global command history
+                    if (!window.commandHistory) window.commandHistory = [];
+                    if (!window.currentCommand) window.currentCommand = 0;
+
+                    window.commandHistory.push(commandText);
+                    window.currentCommand = window.commandHistory.length;
+
+                    // Execute the command using the main terminal logic
+                    if (window.executeCommand && window.preserveCurrentCommand && window.addNewCommandLine) {
+                        window.preserveCurrentCommand(document.getElementById('terminal-content'));
+                        const output = window.executeCommand(commandText, commands);
+
+                        if (commandText === 'clear') {
+                            const terminal = document.getElementById('terminal-content');
+                            const commandOutputs = terminal.querySelectorAll('.command-output:not(:first-child)');
+                            commandOutputs.forEach(output => output.remove());
+                            const commandLines = terminal.querySelectorAll('.command-line');
+                            commandLines.forEach(line => line.remove());
+                        } else if (commandText === 'easy_mode') {
+                            window.location.href = '../Simpler-Portfolio/Simple.html';
+                            return;
+                        } else if (output) {
+                            const terminal = document.getElementById('terminal-content');
+                            const executedCommand = terminal.querySelector('.command-line.executed:last-child');
+                            if (executedCommand) {
+                                executedCommand.insertAdjacentHTML('afterend', output);
+                            } else {
+                                terminal.insertAdjacentHTML('beforeend', output);
+                            }
+                            window.terminalUtils.smartAutoScrollWithContentDetection();
+                        }
+
+                        window.addNewCommandLine(document.getElementById('terminal-content'));
+
+                        // Reset cursor position and initialize it
+                        if (window.cursorPosition !== undefined) {
+                            window.cursorPosition = 0;
+                        }
+                        if (window.updateCommandText) {
+                            window.updateCommandText('', 0);
+                        }
+
+                        // Clear the input
+                        e.target.value = '';
+
+                        // Remove has-text class since input is now empty
+                        const currentCommandLine = currentCommandElement.closest('.command-line');
+                        if (currentCommandLine) {
+                            currentCommandLine.classList.remove('has-text');
+                        }
+
+                        // Enhanced mobile auto-scroll and focus
+                        setTimeout(() => {
+                            // Scroll to the new command line and make it visible
+                            if ('ontouchstart' in window) {
+                                // Mobile-specific scrolling
+                                const terminalBody = document.querySelector('.terminal-body');
+                                if (terminalBody) {
+                                    // Force scroll to bottom immediately
+                                    terminalBody.scrollTop = terminalBody.scrollHeight;
+
+                                    // Additional scroll after a small delay to ensure it works
+                                    setTimeout(() => {
+                                        terminalBody.scrollTop = terminalBody.scrollHeight;
+
+                                        // Highlight and activate the new command line on mobile
+                                        const newCommandLine = document.querySelector('.command-line:not(.executed)');
+                                        if (newCommandLine) {
+                                            newCommandLine.classList.add('active');
+
+                                            // Remove the active class after a delay
+                                            setTimeout(() => {
+                                                newCommandLine.classList.remove('active');
+                                            }, 2000);
+                                        }
+                                    }, 150);
+                                }
+                            } else {
+                                // Desktop scrolling
+                                window.terminalUtils.scrollToBottom();
+                            }
+
+                            // Set up mobile input for the new command line
+                            window.setupMobileInput();
+
+                            // Re-focus on mobile with a delay to ensure scrolling is complete
+                            setTimeout(() => {
+                                const newMobileInput = document.getElementById('mobile-input');
+                                if (newMobileInput && 'ontouchstart' in window) {
+                                    newMobileInput.focus();
+                                }
+                            }, 200);
+                        }, 100);
+                    }
+                } else if (e.key === 'Backspace') {
+                    setTimeout(() => {
+                        const text = e.target.value;
+                        if (window.updateCommandText) {
+                            window.updateCommandText(text, text.length);
+                        }
+                    }, 1);
+                }
+            });
+
+            // Set up focus handling
+            currentCommandElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                newInput.focus();
+            });
+
+            currentCommandElement.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                newInput.focus();
+            });
+        }
+    };
+
+    // Store global references
+    window.updateCommandText = updateCommandText;
+    window.executeCommand = executeCommand;
+    window.preserveCurrentCommand = preserveCurrentCommand;
+    window.addNewCommandLine = addNewCommandLine;
+    window.commandHistory = commandHistory;
+    window.currentCommand = currentCommand;
+
+    // Set up mobile input initially
+    setTimeout(() => {
+        window.setupMobileInput();
+    }, 100);
+
+    // Set up scroll-to-bottom button
+    const scrollToBottomBtn = document.getElementById('scroll-to-bottom');
+    if (scrollToBottomBtn) {
+        // Scroll to bottom function
+        const scrollToBottom = () => {
+            const terminalBody = document.getElementById('terminal-content');
+            if (terminalBody) {
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+
+                // Focus on the current command input after scrolling
+                setTimeout(() => {
+                    const currentCommandElement = getCurrentCommandElement();
+                    if (currentCommandElement) {
+                        // For mobile, focus on the hidden mobile input
+                        const mobileInput = document.getElementById('mobile-input');
+                        if (mobileInput) {
+                            mobileInput.focus();
+                        }
+                        // For desktop, click on the command element to trigger focus
+                        currentCommandElement.click();
+                    }
+                }, 100);
+            }
+        };
+
+        // Add click event listener
+        scrollToBottomBtn.addEventListener('click', scrollToBottom);
+
+        // Re-initialize feather icons for the button
+        feather.replace();
     }
 });
 

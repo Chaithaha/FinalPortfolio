@@ -169,12 +169,6 @@ body {
     padding-right: 4px;
 }
 
-.typing {
-    border-right: 2px solid #e0e0e0;
-    white-space: nowrap;
-    overflow: hidden;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end 3.5s forwards;
-}
 
 /* Enhanced Welcome Text for Pixel Logo */
 .welcome-text {
@@ -336,40 +330,137 @@ body {
 }
 
 
+/* Mobile-first responsive improvements */
+
+/* Mobile viewport fix for browser UI */
+@supports (-webkit-touch-callout: none) {
+    .terminal {
+        height: -webkit-fill-available;
+    }
+
+    .terminal-body {
+        height: -webkit-fill-available;
+        max-height: 100vh;
+    }
+}
+
 /* Responsive sizing for different screen sizes */
 @media (max-width: 768px) {
     .terminal-body {
         height: 100vh;
-        padding: 0.1rem 1rem;
+        min-height: 600px;
+        padding: 0.5rem 1rem;
+        font-size: 14px;
+        line-height: 1.6;
     }
-    
+
     .welcome-container {
         margin: 0.5rem 0;
         padding: 0.5rem;
         min-height: 80px;
     }
-    
+
     .pixel-logo-container {
-        padding: 20px 30px;
+        padding: 20px 25px;
+        margin: 0 auto;
+        box-shadow:
+            0 0 0 6px #00ffff,
+            0 0 0 12px #ffffff;
+        max-width: 90vw;
     }
-    
+
     .welcome-text {
-        font-size: 1rem;
-        letter-spacing: 0.1em;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
         line-height: 1.5;
-        padding: 0 0.1em;
-        width: auto;
-        white-space: pre;
+        padding: 0;
+        width: 100%;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
     }
-    
+
     .text-container {
         font-size: 0.8em;
         width: 100%;
         text-align: center;
+        max-width: 90vw;
     }
-    
+
     .star {
         opacity: 0.6;
+    }
+
+    /* Command line improvements for mobile */
+    .command-line {
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 14px;
+        min-height: 24px;
+    }
+
+    .prompt {
+        font-size: 14px;
+        min-width: 10px;
+    }
+
+    .cursor {
+        height: 1.2em;
+        width: 2px;
+    }
+
+    /* Command output improvements */
+    .command-output {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        word-wrap: break-word;
+    }
+
+    /* Project cards mobile styling */
+    .project-card {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        border-radius: 4px;
+    }
+
+    /* Skill tags mobile styling */
+    .skill-tag {
+        padding: 0.2rem 0.6rem;
+        font-size: 0.8rem;
+        margin: 0.2rem;
+    }
+
+    /* Links mobile styling */
+    .link {
+        font-size: 14px;
+        word-break: break-all;
+    }
+
+    /* Mode buttons mobile styling */
+    .mode-button {
+        padding: 10px 12px;
+        margin: 6px 0;
+        font-size: 12px;
+        min-height: 44px; /* Touch target size */
+    }
+
+    .button-prefix {
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    .button-text {
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    .button-description {
+        font-size: 11px;
+    }
+
+    .button-arrow {
+        font-size: 16px;
     }
 }
 
@@ -395,35 +486,149 @@ body {
     }
 }
 
-/* Extra small screens */
+/* Extra small screens and mobile devices */
 @media (max-width: 480px) {
     .terminal-body {
         height: 100vh;
-        padding: 0.1rem 0.8rem;
+        min-height: 500px;
+        padding: 0.4rem 0.8rem;
+        font-size: 13px;
+        line-height: 1.7;
     }
-    
+
     .welcome-container {
         padding: 0.3rem;
         min-height: 60px;
+        margin: 0.3rem 0;
     }
-    
+
     .pixel-logo-container {
-        padding: 15px 20px;
+        padding: 12px 16px;
+        margin: 0 auto;
+        box-shadow:
+            0 0 0 4px #00ffff,
+            0 0 0 8px #ffffff;
+        max-width: 95vw;
+        min-width: 200px;
     }
-    
+
     .welcome-text {
-        font-size: 0.9rem;
-        letter-spacing: 0.08em;
+        font-size: 0.7rem;
+        letter-spacing: 0.06em;
+        line-height: 1.4;
+        padding: 0;
+        width: 100%;
+        white-space: normal;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        text-align: center;
     }
-    
-    /* Use font scaling instead of transform to avoid layout conflicts */
+
     .text-container {
         font-size: 0.7em;
+        width: 100%;
+        text-align: center;
+        max-width: 95vw;
     }
-    
+
     .sparkle {
         width: 2px;
         height: 2px;
+    }
+
+    /* Small screen command line improvements */
+    .command-line {
+        gap: 0.4rem;
+        margin-bottom: 0.8rem;
+        font-size: 13px;
+        min-height: 22px;
+    }
+
+    .prompt {
+        font-size: 13px;
+        min-width: 8px;
+    }
+
+    .cursor {
+        height: 1.1em;
+        width: 1px;
+    }
+
+    /* Command output small screen improvements */
+    .command-output {
+        font-size: 13px;
+        line-height: 1.7;
+        margin-bottom: 0.8rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Project cards small screen styling */
+    .project-card {
+        padding: 0.6rem;
+        margin-bottom: 0.6rem;
+        border-radius: 3px;
+        font-size: 12px;
+    }
+
+    /* Skill tags small screen styling */
+    .skill-tag {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
+        margin: 0.15rem;
+        display: inline-block;
+        min-height: 24px;
+        line-height: 1.2;
+    }
+
+    /* Links small screen styling */
+    .link {
+        font-size: 13px;
+        word-break: break-all;
+        line-height: 1.5;
+    }
+
+    /* Mode buttons small screen styling */
+    .mode-button {
+        padding: 8px 10px;
+        margin: 4px 0;
+        font-size: 11px;
+        min-height: 40px; /* Touch target size */
+        line-height: 1.3;
+    }
+
+    .button-prefix {
+        font-size: 12px;
+        margin-right: 6px;
+    }
+
+    .button-text {
+        font-size: 12px;
+        margin-right: 6px;
+        line-height: 1.3;
+    }
+
+    .button-description {
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .button-arrow {
+        font-size: 14px;
+    }
+
+    /* Better scrollbar for mobile */
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1e1e1e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 2px;
     }
 }
 
@@ -436,7 +641,7 @@ body {
     }
 }
 
-/* Remove focus styling from command input */
+/* Command input styling */
 #current-command {
     outline: none;
     border: none;
@@ -444,6 +649,13 @@ body {
     color: inherit;
     font-family: inherit;
     font-size: inherit;
+    caret-color: #e0e0e0; /* Cursor color */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: inline-block;
+    width: 100%;
+    min-width: 1px; /* Ensure it's clickable */
 }
 
 #current-command:focus {
@@ -455,6 +667,118 @@ body {
 /* Remove any default styling from focusable elements */
 #current-command:focus-visible {
     outline: none;
+}
+
+/* General command line improvements for all devices */
+.command-line:not(.executed) {
+    position: relative;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 8px 0;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile input improvements */
+@media (hover: none) and (pointer: coarse) {
+    #current-command {
+        min-height: 24px;
+        padding: 4px 0;
+        cursor: text;
+        position: relative;
+        z-index: 10;
+        transition: background-color 0.2s ease;
+    }
+
+    #current-command:focus {
+        background-color: rgba(39, 201, 63, 0.05);
+        outline: 1px solid rgba(39, 201, 63, 0.3);
+        outline-offset: 1px;
+    }
+
+    /* Ensure proper cursor visibility on mobile */
+    .cursor {
+        width: 3px;
+        background-color: #00ff00;
+        display: inline-block;
+        vertical-align: text-bottom;
+        margin-left: 1px;
+    }
+
+    /* Hidden mobile input styling */
+    #mobile-input {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Enhanced mobile command line styling */
+    .command-line:not(.executed) {
+        position: relative;
+        transition: background-color 0.3s ease;
+        border-radius: 4px;
+        padding: 8px 12px;
+        margin: 8px 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        border: 1px dashed rgba(39, 201, 63, 0.2);
+    }
+
+    .command-line:not(.executed).has-text {
+        border-color: rgba(39, 201, 63, 0.5);
+        background-color: rgba(39, 201, 63, 0.05);
+    }
+
+    /* Enhanced hint text positioning */
+    .command-line:not(.executed):before {
+        content: "Type a command...";
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        color: #27c93f;
+        opacity: 0.8;
+        font-family: 'Fira Code', monospace;
+        pointer-events: none;
+        animation: pulse 2s ease-in-out infinite;
+        font-style: italic;
+        z-index: 5;
+    }
+
+    .command-line:not(.executed).has-text:before {
+        content: "";
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 0.4;
+            transform: translateY(-50%) scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.05);
+        }
+    }
+
+    /* Active input indicator */
+    .command-line:not(.executed).active {
+        background-color: rgba(39, 201, 63, 0.1);
+        box-shadow: 0 0 0 1px rgba(39, 201, 63, 0.2);
+    }
+
+    /* Scroll indicator at bottom */
+    .terminal-body:after {
+        content: "";
+        display: block;
+        height: 60px;
+        width: 100%;
+        pointer-events: none;
+    }
 }
 
 /* Scrollbar styling */
@@ -609,4 +933,296 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Mobile-specific improvements */
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    /* Make clickable elements larger for touch */
+    .mode-button {
+        min-height: 48px;
+        padding: 12px 16px;
+        margin: 8px 0;
+    }
+
+    .project-card {
+        min-height: 48px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .skill-tag {
+        min-height: 32px;
+        padding: 8px 12px;
+        margin: 4px;
+        min-width: 48px;
+        text-align: center;
+    }
+
+    /* Increase link tap targets */
+    .link {
+        display: inline-block;
+        padding: 4px 0;
+        min-height: 32px;
+    }
+
+    /* Better focus states for touch */
+    .mode-button:focus {
+        outline: 2px solid #27c93f;
+        outline-offset: 2px;
+    }
+
+    /* Improve command input touch handling */
+    #current-command {
+        min-height: 24px;
+        padding: 2px 0;
+        cursor: text;
+    }
+
+    /* Make cursor more visible on mobile */
+    .cursor {
+        width: 3px;
+        background-color: #00ff00;
+    }
+}
+
+/* Prevent text selection issues on mobile */
+.terminal-body {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+}
+
+/* Allow text selection in output areas */
+.command-output {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Better scrolling on mobile */
+.terminal-body {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+}
+
+/* Prevent bounce scrolling on mobile */
+body {
+    overscroll-behavior: none;
+}
+
+/* Mobile keyboard viewport fix */
+@supports (height: 100dvh) {
+    .terminal {
+        height: 100dvh;
+    }
+
+    .terminal-body {
+        height: 100dvh;
+    }
+}
+
+/* Mobile landscape mode improvements */
+@media (max-width: 768px) and (orientation: landscape) {
+    .terminal-body {
+        min-height: 100vh;
+        padding: 0.3rem 1rem;
+    }
+
+    .welcome-container {
+        margin: 0.2rem 0;
+        min-height: 50px;
+    }
+
+    .pixel-logo-container {
+        padding: 8px 16px;
+        margin: 0 auto;
+    }
+
+    .welcome-text {
+        font-size: 0.6rem;
+        letter-spacing: 0.05em;
+        line-height: 1.3;
+    }
+
+    .command-line {
+        margin-bottom: 0.5rem;
+        min-height: 20px;
+    }
+
+    .command-output {
+        margin-bottom: 0.6rem;
+    }
+}
+
+/* Mobile portrait mode improvements */
+@media (max-width: 480px) and (orientation: portrait) {
+    .terminal-body {
+        padding: 0.6rem 0.8rem;
+        min-height: 100vh;
+    }
+
+    .welcome-container {
+        margin: 0.8rem 0;
+        min-height: 80px;
+    }
+
+    .pixel-logo-container {
+        padding: 16px 20px;
+    }
+
+    .welcome-text {
+        font-size: 0.8rem;
+        letter-spacing: 0.07em;
+        line-height: 1.4;
+    }
+}
+
+/* Scroll to bottom button for mobile */
+.scroll-to-bottom-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #27c93f;
+    border: 2px solid #27c93f;
+    border-radius: 50%;
+    color: #0d1117;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(39, 201, 63, 0.3);
+}
+
+.scroll-to-bottom-btn:hover {
+    background-color: #0d1117;
+    color: #27c93f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(39, 201, 63, 0.4);
+}
+
+.scroll-to-bottom-btn:active {
+    transform: translateY(0);
+}
+
+.scroll-to-bottom-btn i {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2.5;
+}
+
+/* Show button only on mobile devices */
+@media (hover: none) and (pointer: coarse) {
+    .scroll-to-bottom-btn {
+        display: flex;
+    }
+}
+
+/* Also show on small screens */
+@media (max-width: 768px) {
+    .scroll-to-bottom-btn {
+        display: flex;
+    }
+}
+
+/* Fixed welcome header on mobile */
+@media (max-width: 768px) {
+    .terminal-body {
+        padding-top: 0;
+        position: relative;
+    }
+
+    .command-output:first-child {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: #0d1117;
+        padding: 0.5rem 0;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #27c93f;
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+    .command-output:first-child .welcome-container {
+        position: relative;
+        z-index: 101;
+    }
+
+    /* Add padding to content after the welcome section */
+    .command-output:not(:first-child) {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Ensure command lines are below the fixed header */
+    .command-line {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Fix project cards overflow on mobile */
+    .project-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Fix skill tags overflow on mobile */
+    .skill-tag {
+        display: inline-block;
+        max-width: calc(100% - 0.5rem);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        margin: 0.15rem;
+        word-wrap: normal;
+        vertical-align: top;
+    }
+
+    /* Flex container for technologies */
+    .flex.gap-2 {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        align-items: flex-start;
+    }
+
+    /* Make technology tags wrap properly */
+    .flex.gap-2 .skill-tag {
+        flex: 0 0 auto;
+        max-width: calc(100% - 1rem);
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .skill-tag {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+        margin: 0.1rem;
+        max-width: calc(100% - 0.3rem);
+    }
+
+    .flex.gap-2 {
+        gap: 0.2rem;
+    }
+
+    .project-card {
+        padding: 0.5rem;
+    }
 }

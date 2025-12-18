@@ -6,7 +6,7 @@ const projectsData = {
             id: 4,
             title: "WIP Android Marketplace App",
             description: "Android marketplace application built with Jetpack Compose and Kotlin, featuring secure authentication, location-based search, and category filtering for buying and selling pre-owned and new items.",
-            image: "../GIFS/android.mp4",
+            image: "./GIFS/android.mp4",
             technologies: ["Kotlin", "Jetpack Compose", "Android SDK", "Firebase Authentication", "REST API", "MVVM Architecture"],
             link: "https://streamable.com/df1mxt",
             github: "#",
@@ -17,7 +17,7 @@ const projectsData = {
             id: 3,
             title: "ForOranges",
             description: "Full-stack e-commerce solution with React and Node.js and Supabase integration for authentication and database management.",
-            image: "../GIFS/fororanges.gif",
+            image: "./GIFS/fororanges.gif",
             technologies: ["React", "Node.js", "MongoDB"],
             link: "https://e-com-front-chi.vercel.app/",
             github: "https://github.com/chait/ecommerce-platform",
@@ -28,7 +28,7 @@ const projectsData = {
             id: 2,
             title: "PC Building Guide",
             description: "A comprehensive PC building guide featuring a modern serverless architecture with YouTube and Reddit API integration. Built with Node.js/Express.js backend and responsive frontend, helping first-time builders find installation guides and community resources for any PC component.",
-            image: "../GIFS/pcb.gif",
+            image: "./GIFS/pcb.gif",
             technologies: ["Node.js", "Express.js", "JavaScript", "HTML5/CSS3", "Netlify"],
             link: "https://pcbuildchait.netlify.app/",
             github: "https://github.com/chait/pc-building-guide",
@@ -39,7 +39,7 @@ const projectsData = {
             id: 1,
             title: "WattsWrong Website",
             description: "A college-funded project website based on a fictional LEGO city, featuring WattsWrong as a corrupt organization. Selected by sponsors for its innovative concept.",
-            image: "../GIFS/watts-wrong.gif",
+            image: "./GIFS/watts-wrong.gif",
             technologies: ["HTML", "CSS", "JavaScript", "Web Design"],
             link: "https://chaithaha.github.io/WattsWrong-Website/",
             github: "https://github.com/chait/wattswrong-website",
@@ -75,23 +75,33 @@ export const projects = {
                                         ${project.gifPreviewTitle ? `<div class="text-xs text-gray-400 ml-2">${project.gifPreviewTitle}</div>` : ''}
                                     </div>
                                 </div>
-                                <div class="bg-black rounded overflow-hidden">
+                                <div class="bg-black rounded overflow-hidden relative">
                                     ${project.image.endsWith('.mp4') ?
                                         `<video src="${project.image}"
                                                 alt="${project.title} Preview"
-                                                class="w-full h-auto rounded"
+                                                class="w-full h-auto rounded cursor-pointer"
                                                 style="max-height: 200px; object-fit: cover; background: #000;"
-                                                autoplay
                                                 muted
                                                 loop
                                                 playsinline
-                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                         </video>` :
+                                                preload="metadata"
+                                                onloadeddata="this.play().catch(e => { console.log('Autoplay prevented, will play on click'); this.parentElement.querySelector('.play-overlay').style.display='flex'; });"
+                                                onclick="if(this.paused) { this.play(); this.parentElement.querySelector('.play-overlay').style.display='none'; } else { this.pause(); this.parentElement.querySelector('.play-overlay').style.display='flex'; }"
+                                                onerror="console.error('Video loading error:', e); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                         </video>
+                                         <div class="play-overlay absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none" style="display: none;">
+                                             <div class="text-white text-center">
+                                                 <div class="text-4xl mb-2">▶️</div>
+                                                 <div class="text-sm">Click to play</div>
+                                             </div>
+                                         </div>` :
                                         `<img src="${project.image}"
                                              alt="${project.title} Preview"
                                              class="w-full h-auto rounded"
                                              style="max-height: 200px; object-fit: ${project.title === 'WattsWrong Website' ? 'contain' : 'cover'}; background: #000;"
-                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`
+                                             loading="lazy"
+                                             onload="console.log('Image loaded successfully');"
+                                             onerror="console.error('Image loading error:', e); this.style.display='none'; this.nextElementSibling.style.display='block';">`
                                     }
                                     <div class="p-4 text-center text-gray-400" style="display: none;">
                                         <div class="text-sm">🎬 Preview</div>
@@ -103,7 +113,7 @@ export const projects = {
                     ` : ''}
                     
                     <p class="text-gray-400 mb-2">${project.description}</p>
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2" style="overflow-wrap: break-word; word-wrap: break-word;">
                         ${project.technologies.map(tech => `<span class="skill-tag">${tech}</span>`).join('')}
                     </div>
                 </div>

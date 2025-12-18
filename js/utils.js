@@ -39,14 +39,31 @@ function addNewCommandLine(terminal) {
     if (existingCommandLine) {
         existingCommandLine.remove();
     }
-    
+
     const commandLineHTML = `
         <div class="command-line">
             <span class="prompt">$</span>
             <span id="current-command"></span>
+            <input type="text" id="mobile-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
         </div>
     `;
     terminal.insertAdjacentHTML('beforeend', commandLineHTML);
+
+    // Set up mobile input handling for the new command line
+    if (typeof window.setupMobileInput === 'function') {
+        setTimeout(() => {
+            window.setupMobileInput();
+
+            // Ensure the hint is visible for the new command line
+            const newCommandLine = document.querySelector('.command-line:not(.executed)');
+            if (newCommandLine) {
+                // Force a reflow to ensure the pseudo-element shows
+                newCommandLine.style.display = 'none';
+                newCommandLine.offsetHeight; // Force reflow
+                newCommandLine.style.display = '';
+            }
+        }, 50);
+    }
 }
 
 // Function to execute a command

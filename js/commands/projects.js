@@ -3,15 +3,26 @@
 const projectsData = {
     featured: [
         {
-            id: 1,
-            title: "WattsWrong Website",
-            description: "A college-funded project website based on a fictional LEGO city, featuring WattsWrong as a corrupt organization. Selected by sponsors for its innovative concept.",
-            image: "../GIFS/watts-wrong.gif",
-            technologies: ["HTML", "CSS", "JavaScript", "Web Design"],
-            link: "https://chaithaha.github.io/WattsWrong-Website/",
-            github: "https://github.com/chait/wattswrong-website",
+            id: 4,
+            title: "WIP Android Marketplace App",
+            description: "Android marketplace application built with Jetpack Compose and Kotlin, featuring secure authentication, location-based search, and category filtering for buying and selling pre-owned and new items.",
+            image: "../GIFS/android.mp4",
+            technologies: ["Kotlin", "Jetpack Compose", "Android SDK", "Firebase Authentication", "REST API", "MVVM Architecture"],
+            link: "https://streamable.com/df1mxt",
+            github: "#",
             hasGifPreview: true,
-            gifPreviewTitle: "WattsWrong Preview"
+            gifPreviewTitle: ""
+        },
+        {
+            id: 3,
+            title: "ForOranges",
+            description: "Full-stack e-commerce solution with React and Node.js and Supabase integration for authentication and database management.",
+            image: "../GIFS/fororanges.gif",
+            technologies: ["React", "Node.js", "MongoDB"],
+            link: "https://e-com-front-chi.vercel.app/",
+            github: "https://github.com/chait/ecommerce-platform",
+            hasGifPreview: true,
+            gifPreviewTitle: ""
         },
         {
             id: 2,
@@ -22,18 +33,18 @@ const projectsData = {
             link: "https://pcbuildchait.netlify.app/",
             github: "https://github.com/chait/pc-building-guide",
             hasGifPreview: true,
-            gifPreviewTitle: "PC Guide Preview"
+            gifPreviewTitle: ""
         },
         {
-            id: 3,
-            title: "ForOranges",
-            description: "Full-stack e-commerce solution with React and Node.js and Supabase integration for authentication and database management.",
-            image: "../GIFS/fororanges.gif",
-            technologies: ["React", "Node.js", "MongoDB"],
-            link: "e-com-front-chi.vercel.app",
-            github: "https://github.com/chait/ecommerce-platform",
+            id: 1,
+            title: "WattsWrong Website",
+            description: "A college-funded project website based on a fictional LEGO city, featuring WattsWrong as a corrupt organization. Selected by sponsors for its innovative concept.",
+            image: "../GIFS/watts-wrong.gif",
+            technologies: ["HTML", "CSS", "JavaScript", "Web Design"],
+            link: "https://chaithaha.github.io/WattsWrong-Website/",
+            github: "https://github.com/chait/wattswrong-website",
             hasGifPreview: true,
-            gifPreviewTitle: "E-commerce Preview"
+            gifPreviewTitle: ""
         },
     ]
 };
@@ -61,15 +72,27 @@ export const projects = {
                                         <div class="w-2 h-2 bg-red-500 rounded-full"></div>
                                         <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
                                         <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                        <div class="text-xs text-gray-400 ml-2">${project.gifPreviewTitle}</div>
+                                        ${project.gifPreviewTitle ? `<div class="text-xs text-gray-400 ml-2">${project.gifPreviewTitle}</div>` : ''}
                                     </div>
                                 </div>
                                 <div class="bg-black rounded overflow-hidden">
-                                    <img src="${project.image}"
-                                         alt="${project.title} Preview"
-                                         class="w-full h-auto rounded"
-                                         style="max-height: 200px; object-fit: ${project.title === 'WattsWrong Website' ? 'contain' : 'cover'}; background: #000;"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    ${project.image.endsWith('.mp4') ?
+                                        `<video src="${project.image}"
+                                                alt="${project.title} Preview"
+                                                class="w-full h-auto rounded"
+                                                style="max-height: 200px; object-fit: cover; background: #000;"
+                                                autoplay
+                                                muted
+                                                loop
+                                                playsinline
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                         </video>` :
+                                        `<img src="${project.image}"
+                                             alt="${project.title} Preview"
+                                             class="w-full h-auto rounded"
+                                             style="max-height: 200px; object-fit: ${project.title === 'WattsWrong Website' ? 'contain' : 'cover'}; background: #000;"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">`
+                                    }
                                     <div class="p-4 text-center text-gray-400" style="display: none;">
                                         <div class="text-sm">🎬 Preview</div>
                                         <div class="text-xs mt-1">Click title to view project</div>
